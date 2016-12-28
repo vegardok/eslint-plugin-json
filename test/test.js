@@ -1,6 +1,9 @@
-
 var plugin = require('../lib/index.js');
+var rule = plugin.rules['parsable-json'];
+
 var assert = require('chai').assert;
+var RuleTester = require('eslint').RuleTester;
+
 
 describe('plugin', function() {
     describe('structure', function() {
@@ -49,6 +52,50 @@ describe('plugin', function() {
                 { error: 3 },
                 { error: 4 },
             ]);
+        });
+    });
+});
+
+describe('rules', function () {
+    var ruleTester = new RuleTester();
+    var JS_PREAMBLE = '/* global: fakeObject */\n' +
+                      'fakeObject = ';
+    describe('parsable-json', function () {
+        it('should report an error if JSON.parse throws an error parsing the input', function () {
+            var validJSON = JS_PREAMBLE + '{ "foo": "bar"}';
+            var trailingComma = JS_PREAMBLE + '{ "foo": "bar",}';
+            var invalidDataType = JS_PREAMBLE + '{ "foo": /bar/ }';
+            var missingQuotes = JS_PREAMBLE + '{ foo: "bar" }';
+            var wrongQuotes = JS_PREAMBLE + '{ \'foo\': \'bar\' }';
+
+            ruleTester.run('parsable-json', rule, {
+                valid: [
+                    { code: validJSON }
+                ],
+                invalid: [
+                    {
+                        code: invalidDataType,
+                        errors: [{
+                            message: 'Unexpected token / in JSON at position 9'
+                        }]
+                    }, {
+                        code: trailingComma,
+                        errors: [{
+                            message: 'Unexpected token } in JSON at position 15'
+                        }]
+                    }, {
+                        code: missingQuotes,
+                        errors: [{
+                            message: 'Unexpected token f in JSON at position 2'
+                        }]
+                    }, {
+                        code: wrongQuotes,
+                        errors: [{
+                            message: 'Unexpected token \' in JSON at position 2'
+                        }]
+                    }
+                ]
+            });
         });
     });
 });
