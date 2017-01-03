@@ -21,6 +21,12 @@
   "bugs": {
     "url": "https://github.com/azeemba/eslint-plugin-json/issues"
   },
+  "eslintConfig": {
+    "extends": "eslint:recommended",
+    "env": {
+      "node": true
+    }
+  },
   "peerDependencies": {
     "eslint": "^3.0.0"
   },
