@@ -37,6 +37,9 @@
   "engines": {
     "node": ">=3"
   },
-  "url": "https://github.com/azeemba/eslint-plugin-json",
-  "license": "ISC"
+  "url": "https://github.com/vegardok/eslint-plugin-json",
+  "license": "ISC",
+  "dependencies": {
+    "lodash.includes": "^4.3.0"
+  }
 }
